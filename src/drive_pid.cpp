@@ -15,7 +15,7 @@ void drive_pid::init(void){
     forward_pid.init();
 }
 
-void drive_pid::drive(float distance, float rotation, bool end){
+void drive_pid::drive(float distance, float rotation, bool end, bool wait){
     //turn(rotation);
 
     // https://www.desmos.com/calculator/iqyqgdfwuz
@@ -44,7 +44,8 @@ void drive_pid::drive(float distance, float rotation, bool end){
         pros::delay(10);
     }*/
    forward_pid.target += distance;
-    pros::delay((std::abs(distance)+100)*0.75);
+   if (wait){
+    pros::delay((std::abs(distance)+100)*0.75);}
 
 }
 
@@ -68,7 +69,9 @@ void drive_pid::turn(float rotation){
     
     int n = 1;
     while (n < 2*k1){turn_pid.target += gl(n, k1,curve_midpoint,turn_accel_jerk,turn_max_speed, k); n+= 1;}
-    */ turn_pid.target = rotation;
+    */ 
+    rotation -= starting_heading;
+    turn_pid.target = rotation;
     //while (std::abs(turn_pid.sensor-rotation) > 5 /*&& !COMPETITION_DISABLED*/)
     /*{
         pros::delay(10);
@@ -82,6 +85,9 @@ void drive_pid::update(void){
 
     float forward_voltage = forward_pid.return_voltage((((left_1.get_position()+right_1.get_position())))/*2)*wheel_size*360)*/);
     float turn_voltage = turn_pid.return_voltage(inertial_sensor.get_rotation());
+
+    if (forward_voltage > max_volt){ forward_voltage = max_volt;}
+    if (forward_voltage < -max_volt){ forward_voltage = -max_volt;}
 
     // x drive motor configuration
     right_1.move_voltage(forward_voltage  - turn_voltage);

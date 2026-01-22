@@ -44,6 +44,7 @@ class drive_pid{
     const float fd_accel_jerk = .0000000000250f;
     const float turn_accel_jerk = 1.0f;
 
+    int max_volt = 12000;
 
     const float fd_max_speed = (950*sqrt(2)*3.25)/(3*60*100);
     const float turn_max_speed = 36;
@@ -55,8 +56,9 @@ class drive_pid{
 
     void init(void);
 
+    float starting_heading = 0;
     void turn(float rotation);
-    void drive(float distance, float rotation = 0, bool end = true);
+    void drive(float distance, float rotation = 0, bool end = true, bool wait = true);
 
     void update(void);
 

@@ -80,6 +80,40 @@ void color_sorter(){
 
 void autonomous() {
 	Task drive{run_pid};
+	Robot.intake(1);
+	//Robot.intake_high.move_velocity(50);
+	
+	Robot.Drive_pid.starting_heading = 333.33;
+	//Robot.Drive_pid.turn_pid.target = 333.33;
+	Robot.Drive_pid.max_volt = 12000;
+	Robot.drive(21,false);
+	Robot.Drive_pid.max_volt = 12000;
+	pros::delay(600);
+	Robot.little_will.set_value(true);
+	Robot.intake_back.move_velocity(10);
+	Robot.intake_high.move_velocity(10);
+	Robot.drive(9);
+	pros::delay(300);
+	Robot.turn_to(180+38);
+	pros::delay(650);
+	Robot.Drive_pid.max_volt = 12000;
+	Robot.drive(-14.5*sqrt(2));
+	Robot.intake(2);
+	Robot.intake_high.move_velocity(-100);
+	Robot.intake_back.move_velocity(-75);
+	pros::delay(250);
+	Robot.intake_back.move_velocity(200);
+	pros::delay(700);
+	Robot.intake(1);
+	Robot.drive((39.5)*sqrt(2), false);
+	pros::delay(1000);
+	Robot.turn_to(175);
+	Robot.drive(23);
+	Robot.drive(-50, false);
+	pros::delay(1000);
+	Robot.intake(3);
+	pros::delay(3000);
+	Robot.drive(10);
 	//Task color_sorting_task{color_sorter};
 	//color_sorting_task.join();
 }
@@ -103,7 +137,7 @@ void opcontrol() {
 	bool toggle_descore_check = false;
 	bool toggle_match_load_check = false;
 	bool match_load = false;
-	bool descore_active = false;
+	bool descore_active = true;	
 	int intake_dir = 0;
 	Task color_sorting_task{color_sorter};
 	while (true) {		
@@ -173,8 +207,10 @@ void opcontrol() {
 
 		Robot.intake(intake_dir);
 
+
 		Robot.little_will.set_value(match_load);
 		Robot.descore.set_value(descore_active);
+
 
 		pros::delay(20); // Run for 20 ms then update
 	}

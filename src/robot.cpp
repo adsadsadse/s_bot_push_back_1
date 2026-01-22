@@ -9,13 +9,12 @@ void robot::update(void){
 
 void robot::intake(int pos){
     if (pos == 0){
-        descore.set_value(false);
         intake_back.move_velocity(0);
         intake_high.move_velocity(0);
         intake_low.move_velocity(0);
     }
     if (pos == 1){
-        descore.set_value(false);    
+        descore.set_value(true);    
         intake_back.move_velocity(200);
         intake_high.move_velocity(200);
         intake_low.move_velocity(200);
@@ -49,13 +48,13 @@ void robot::intake(int pos){
         counter2 = 0;
     }
     if (pos == 2){
-        descore.set_value(true);   
+        descore.set_value(false);   
         intake_back.move_velocity(200);
         intake_high.move_velocity(-200);
         intake_low.move_velocity(200);
     }
     if (pos == 3){
-        descore.set_value(true);   
+        descore.set_value(false);   
         intake_back.move_velocity(200);
         intake_high.move_velocity(200);
         intake_low.move_velocity(200);
@@ -68,9 +67,9 @@ void robot::intake(int pos){
     }
 };
 
-void robot::drive(float distance, float rotation, bool end){
+void robot::drive(float distance, bool wait, float rotation, bool end){
     distance = distance*360*3/(3.25*M_PI)/48*36;
-    Drive_pid.drive(distance);
+    Drive_pid.drive(distance, rotation, end, wait);
 }
 
 void robot::turn_to(float heading){

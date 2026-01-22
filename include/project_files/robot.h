@@ -17,7 +17,7 @@ class robot{
     pros::v5::Motor left_2{-12};
     pros::v5::Motor left_3{-13};
 
-    pros::v5::IMU inertial_sensor{14};
+    pros::v5::IMU inertial_sensor{2};
 
     //pros::v5::Optical color_sort{4};
 
@@ -27,7 +27,7 @@ class robot{
                         left_3, 
                         inertial_sensor};
     
-    void drive(float distance, float rotation = (0.0F), bool end = true);
+    void drive(float distance, bool wait = true, float rotation = (0.0F), bool end = true);
     void turn_to(float heading);
     void intake(int pos);
     pros::v5::Motor intake_high{15}; 
