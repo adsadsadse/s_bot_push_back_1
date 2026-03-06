@@ -41,6 +41,7 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
+int auto_index = 0;
 void run_pid(){
 	int c = 0;
 	while (true)
@@ -48,7 +49,7 @@ void run_pid(){
 		c+= 1;
 		Robot.update();
 		pros::delay(10);
-		if (c > 1500){break;}
+		if (c > 1500 && !(auto_index == 4)){break;}
 	}
 	
 }
@@ -80,42 +81,14 @@ void color_sorter(){
 
 void autonomous() {
 	Task drive{run_pid};
-	Robot.intake(1);
-	//Robot.intake_high.move_velocity(50);
-	
-	Robot.Drive_pid.starting_heading = 333.33;
-	//Robot.Drive_pid.turn_pid.target = 333.33;
-	Robot.Drive_pid.max_volt = 12000;
-	Robot.drive(21,false);
-	Robot.Drive_pid.max_volt = 12000;
-	pros::delay(600);
-	Robot.little_will.set_value(true);
-	Robot.intake_back.move_velocity(10);
-	Robot.intake_high.move_velocity(10);
-	Robot.drive(9);
-	pros::delay(300);
-	Robot.turn_to(180+38);
-	pros::delay(650);
-	Robot.Drive_pid.max_volt = 12000;
-	Robot.drive(-14.5*sqrt(2));
-	Robot.intake(2);
-	Robot.intake_high.move_velocity(-100);
-	Robot.intake_back.move_velocity(-75);
-	pros::delay(250);
-	Robot.intake_back.move_velocity(200);
-	pros::delay(700);
-	Robot.intake(1);
-	Robot.drive((39.5)*sqrt(2), false);
-	pros::delay(1000);
-	Robot.turn_to(175);
-	Robot.drive(23);
-	Robot.drive(-50, false);
-	pros::delay(1000);
-	Robot.intake(3);
-	pros::delay(3000);
-	Robot.drive(10);
-	//Task color_sorting_task{color_sorter};
-	//color_sorting_task.join();
+	/*1 = left
+	2 = right
+	3 = solo awp
+	4 = skills
+	5 = drive fwd an inch*/
+
+	auto_index = 4;
+	Robot.auton(auto_index);
 }
 
 /**
@@ -140,6 +113,9 @@ void opcontrol() {
 	bool descore_active = true;	
 	int intake_dir = 0;
 	Task color_sorting_task{color_sorter};
+	Robot.intake_low_vel = 200;
+    Robot.intake_back_vel = 200;
+    Robot.intake_high_vel = 200;
 	while (true) {		
 		float ld = float(controller.get_analog(ANALOG_LEFT_Y))/127.0f; // Gets amount forward/backward from left joystick
 		float rd = float(controller.get_analog(ANALOG_RIGHT_Y))/127.0f;
@@ -165,6 +141,7 @@ void opcontrol() {
 					intake_dir = 0;
 				}
 				else if (controller.get_digital(DIGITAL_R1)){
+					descore_active = true;
 					intake_dir = 1;
 				}
 				else if (controller.get_digital(DIGITAL_L2)){
@@ -174,7 +151,7 @@ void opcontrol() {
 					intake_dir = 2;
 				}
 				else if (controller.get_digital(DIGITAL_L1)){
-			flipper_out = 0;	
+					descore_active = false;	
 					intake_dir = 3;
 				}
 			}
@@ -182,7 +159,7 @@ void opcontrol() {
 		}
 		else{toggle_intake_check = false;}
 		
-		if (controller.get_digital(DIGITAL_X)){
+		if (controller.get_digital(DIGITAL_Y)){
 			if (!toggle_descore_check){
 				descore_active = !descore_active;
 			}
@@ -190,7 +167,7 @@ void opcontrol() {
 		}
 		else{toggle_descore_check = false;}
 
-		if (controller.get_digital(DIGITAL_A)){
+		if (controller.get_digital(DIGITAL_B)){
 			if (!toggle_match_load_check){
 				match_load = !match_load;
 			}
@@ -210,6 +187,10 @@ void opcontrol() {
 
 		Robot.little_will.set_value(match_load);
 		Robot.descore.set_value(descore_active);
+
+		if (Robot.inertial_sensor.get_pitch() < 0){
+			Robot.little_will.set_value(true);
+		}
 
 
 		pros::delay(20); // Run for 20 ms then update

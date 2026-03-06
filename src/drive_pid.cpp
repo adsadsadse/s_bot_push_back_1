@@ -49,7 +49,7 @@ void drive_pid::drive(float distance, float rotation, bool end, bool wait){
 
 }
 
-void drive_pid::turn(float rotation){
+void drive_pid::turn(float rotation, bool time){
 
     /*float distance_to_travel = rotation;
 
@@ -76,7 +76,9 @@ void drive_pid::turn(float rotation){
     /*{
         pros::delay(10);
     }*/
-   pros::delay(std::abs(rotation - turn_pid.sensor)*10+60);
+   if (time){
+    pros::delay(std::abs(rotation - turn_pid.sensor)*10+60);
+   }
     
 
 }

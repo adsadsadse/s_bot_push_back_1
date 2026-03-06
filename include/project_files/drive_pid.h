@@ -57,7 +57,7 @@ class drive_pid{
     void init(void);
 
     float starting_heading = 0;
-    void turn(float rotation);
+    void turn(float rotation, bool time = true);
     void drive(float distance, float rotation = 0, bool end = true, bool wait = true);
 
     void update(void);

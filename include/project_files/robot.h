@@ -10,14 +10,14 @@ class robot{
     void init(void);
 
     //6 motor drive configuration
-    pros::v5::Motor right_1{18};
-    pros::v5::Motor right_2{-14};
-    pros::v5::Motor right_3{19};
-    pros::v5::Motor left_1{11};
-    pros::v5::Motor left_2{-12};
-    pros::v5::Motor left_3{-13};
+    pros::v5::Motor right_1{6};
+    pros::v5::Motor right_2{5};
+    pros::v5::Motor right_3{-4};
+    pros::v5::Motor left_1{3};
+    pros::v5::Motor left_2{-2};
+    pros::v5::Motor left_3{-1};
 
-    pros::v5::IMU inertial_sensor{2};
+    pros::v5::IMU inertial_sensor{19};
 
     //pros::v5::Optical color_sort{4};
 
@@ -28,20 +28,27 @@ class robot{
                         inertial_sensor};
     
     void drive(float distance, bool wait = true, float rotation = (0.0F), bool end = true);
-    void turn_to(float heading);
+    void turn_to(float heading, bool time = true);
+    int intake_dir = 0;
     void intake(int pos);
-    pros::v5::Motor intake_high{15}; 
-    pros::v5::Motor intake_back{-16}; 
-    pros::v5::Motor intake_low{17}; 
+    pros::v5::Motor intake_high{-8}; 
+    pros::v5::Motor intake_back{12}; 
+    pros::v5::Motor intake_low{10}; 
 
-    pros::adi::DigitalOut little_will{'c'};
-    pros::adi::DigitalOut descore{'b'};
+    pros::adi::DigitalOut little_will{'g'};
+    pros::adi::DigitalOut descore{'h'};
 
     void update(void);
 
     int counter = 0;
     int counter2 = 0;
+    int counter3 = 0;
 
+    int intake_low_vel = 200;
+    int intake_back_vel = 200;
+    int intake_high_vel = 200;
+
+    void auton(int index);
 
 };
 
